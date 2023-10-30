@@ -1,0 +1,47 @@
+# bookstore/models.py
+from django.db import models
+
+class Book(models.Model):
+    title = models.CharField(max_length=200)
+    author = models.CharField(max_length=100)
+    genre = models.CharField(max_length=100)
+    price = models.DecimalField(max_digits=5, decimal_places=2)
+    cover_image = models.ImageField(upload_to='book_covers/')
+
+    def __str__(self):
+        return self.title
+
+
+# bookstore/views.py
+from django.shortcuts import render
+from .models import Book
+
+def book_list(request):
+    books = Book.objects.all()
+    return render(request, 'bookstore/book_list.html', {'books': books})
+
+
+# bookstore/urls.py
+from django.urls import path
+from .views import book_list
+
+urlpatterns = [
+    path('books/', book_list, name='book_list'),
+]
+
+
+<!-- bookstore/templates/bookstore/book_list.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bookstore</title>
+</head>
+<body>
+    <h1>Bookstore</h1>
+    <ul>
+        {% for book in books %}
+            <li>{{ book.title }} by {{ book.author }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
